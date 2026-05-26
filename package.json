@@ -1,0 +1,17 @@
+{
+  "name": "cafeteria-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*",
+    "db/*"
+  ],
+  "scripts": {
+    "db:cafeteria:generate": "npm run generate -w db/cafeteria",
+    "db:cafeteria:migrate": "npm run migrate -w db/cafeteria",
+    "db:wallet:generate": "npm run generate -w db/wallet",
+    "db:wallet:migrate": "npm run migrate -w db/wallet"
+  }
+}
