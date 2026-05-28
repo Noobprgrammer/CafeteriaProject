@@ -1,0 +1,32 @@
+{
+  "name": "@cafeteria/db-wallet",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/schema.js",
+  "types": "./dist/schema.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/schema.d.ts",
+      "default": "./dist/schema.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "generate": "drizzle-kit generate --config=drizzle.config.ts",
+    "migrate": "tsx src/migrate.ts",
+    "studio": "drizzle-kit studio --config=drizzle.config.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "drizzle-orm": "^0.36.4",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.19",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.28.1",
+    "tsx": "^4.22.3",
+    "typescript": "^5.9.3"
+  }
+}

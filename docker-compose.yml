@@ -1,0 +1,55 @@
+services:
+  postgres-cafeteria:
+    image: postgres:16
+    container_name: cafeteria-db
+    environment:
+      POSTGRES_USER: ${CAFETERIA_DB_USER}
+      POSTGRES_PASSWORD: ${CAFETERIA_DB_PASSWORD}
+      POSTGRES_DB: ${CAFETERIA_DB_NAME}
+    ports:
+      - "${CAFETERIA_DB_PORT}:5432"
+    volumes:
+      - cafeteria-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CAFETERIA_DB_USER} -d ${CAFETERIA_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  postgres-wallet:
+    image: postgres:16
+    container_name: wallet-db
+    environment:
+      POSTGRES_USER: ${WALLET_DB_USER}
+      POSTGRES_PASSWORD: ${WALLET_DB_PASSWORD}
+      POSTGRES_DB: ${WALLET_DB_NAME}
+    ports:
+      - "${WALLET_DB_PORT}:5432"
+    volumes:
+      - wallet-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${WALLET_DB_USER} -d ${WALLET_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  
+  mock-wallet:
+    build:
+      context: .
+      dockerfile: services/mock-wallet/Dockerfile
+    container_name: mock-wallet
+    environment:
+      PORT: 4001
+      DATABASE_URL: postgresql://${WALLET_DB_USER}:${WALLET_DB_PASSWORD}@postgres-wallet:5432/${WALLET_DB_NAME}
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres-wallet:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  cafeteria-data:
+  wallet-data:
