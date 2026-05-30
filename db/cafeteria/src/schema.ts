@@ -7,17 +7,18 @@ export const orderStatusEnum = pgEnum('order_status', [ 'paid', 'preparing', 'co
 export const staffRoleEnum = pgEnum('staff_role', [ 'admin', 'staff']);
 
 export const user = pgTable('user', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    studentID: varchar('student_id', {length: 8}).notNull(),
-    wallet_amount: numeric('wallet_amount', {precision: 10, scale: 2}).notNull(),
-    toekn: varchar('token', {length: 128}).notNull().unique(),
-    laste_active_at: timestamp('last_active_at').notNull().defaultNow(),
-    created_at: timestamp('created_at').notNull().defaultNow(),
+  id: uuid('id').primaryKey().defaultRandom(),
+  studentID: varchar('student_id', { length: 64 }).notNull(),
+  walletAmount: numeric('wallet_amount', { precision: 10, scale: 2 }).notNull(),
+  token: varchar('token', { length: 128 }).notNull().unique(),
+  status: userStatusEnum('status').notNull().default('active'),
+  last_active_at: timestamp('last_active_at').notNull().defaultNow(),
+  created_at: timestamp('created_at').notNull().defaultNow(),
 });
 
 export const stall = pgTable('stall', {
     id: uuid('id').primaryKey().defaultRandom(),
-    stall_name: varchar('stalll_name', {length: 128}).notNull(),
+    stall_name: varchar('stall_name', {length: 128}).notNull(),
 })
 
 export const staff = pgTable('staff', {
@@ -26,6 +27,9 @@ export const staff = pgTable('staff', {
   username: varchar('username', { length: 64 }).notNull().unique(),
   password: varchar('password', { length: 256 }).notNull(),
   role: staffRoleEnum('role').notNull(),
+  token: varchar('token', { length: 128 }),
+  last_active_at: timestamp('last_active_at'),
+  is_delete: boolean('is_delete').notNull().default(false),    // ← NEW
   created_at: timestamp('created_at').notNull().defaultNow(),
 });
 

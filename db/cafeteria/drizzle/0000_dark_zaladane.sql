@@ -44,20 +44,24 @@ CREATE TABLE IF NOT EXISTS "staff" (
 	"username" varchar(64) NOT NULL,
 	"password" varchar(256) NOT NULL,
 	"role" "staff_role" NOT NULL,
+	"token" varchar(128),
+	"last_active_at" timestamp,
+	"is_delete" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "staff_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stall" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"stalll_name" varchar(128) NOT NULL
+	"stall_name" varchar(128) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"student_id" varchar(8) NOT NULL,
+	"student_id" varchar(64) NOT NULL,
 	"wallet_amount" numeric(10, 2) NOT NULL,
 	"token" varchar(128) NOT NULL,
+	"status" "user_status" DEFAULT 'active' NOT NULL,
 	"last_active_at" timestamp DEFAULT now() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_token_unique" UNIQUE("token")

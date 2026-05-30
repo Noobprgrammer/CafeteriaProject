@@ -1,5 +1,5 @@
 {
-  "id": "9b71b16d-7cba-4295-8ad4-66147a3e76bb",
+  "id": "eba91ddd-10d6-438a-a0b6-f4bac631e5b2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -339,6 +339,25 @@
           "primaryKey": false,
           "notNull": true
         },
+        "token": {
+          "name": "token",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_active_at": {
+          "name": "last_active_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_delete": {
+          "name": "is_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -388,8 +407,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "stalll_name": {
-          "name": "stalll_name",
+        "stall_name": {
+          "name": "stall_name",
           "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
@@ -416,7 +435,7 @@
         },
         "student_id": {
           "name": "student_id",
-          "type": "varchar(8)",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -431,6 +450,14 @@
           "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "user_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
         },
         "last_active_at": {
           "name": "last_active_at",

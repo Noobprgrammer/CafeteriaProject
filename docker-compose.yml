@@ -50,6 +50,25 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  backend:
+    build:
+      context: .
+      dockerfile: services/backend/Dockerfile
+    container_name: backend
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://${CAFETERIA_DB_USER}:${CAFETERIA_DB_PASSWORD}@postgres-cafeteria:5432/${CAFETERIA_DB_NAME}
+      WALLET_API_URL: http://mock-wallet:4001
+      APP_SECRET: this-is-the-shared-secret-between-uni-app-and-cafeteria
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres-cafeteria:
+        condition: service_healthy
+      mock-wallet:
+        condition: service_started
+    restart: unless-stopped
+
 volumes:
   cafeteria-data:
   wallet-data:
