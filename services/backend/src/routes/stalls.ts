@@ -8,7 +8,7 @@ export const stallRoutes = new Hono();
 stallRoutes.get('/', async (c) => {
   const stalls = await db.select().from(stall);
   return c.json({
-    stalls: stalls.map((s) => ({ id: s.id, name: s.stall_name })),
+    stalls: stalls.map((s) => ({ id: s.id, name: s.stallName })),
   });
 });
 
@@ -32,7 +32,7 @@ stallRoutes.get('/:id/menu', async (c) => {
     );
 
   return c.json({
-    stall: { id: stallRows[0].id, name: stallRows[0].stall_name},
+    stall: { id: stallRows[0].id, name: stallRows[0].stallName},
     items: items.map((item) => ({
       id: item.id,
       name: item.itemName,

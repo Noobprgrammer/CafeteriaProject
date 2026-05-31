@@ -1,6 +1,6 @@
 import { createMiddleware } from 'hono/factory';
-import { eq, and } from 'drizzle-orm';
-import { user } from '@cafeteria/db-cafeteria';
+import { eq, and, ne } from 'drizzle-orm';
+import { user, orderList, orderGroup } from '@cafeteria/db-cafeteria';
 import { db } from '../db/client.js';
 
 type StudentSession = {
@@ -33,9 +33,26 @@ export const studentAuth = createMiddleware<{
 
   // TODO: when orders exist, override expiry if the user has uncollected orders
   const elapsed = Date.now() - u.last_active_at.getTime();
-  if (elapsed > STUDENT_SESSION_TTL_MS) {
-    await db.update(user).set({ status: 'inactive' }).where(eq(user.id, u.id));
-    return c.json({ error: 'Session expired' }, 401);
+    if (elapsed > STUDENT_SESSION_TTL_MS) {
+      // Check for any uncollected orders before expiring the session
+      const activeOrders = await db
+        .select({ id: orderList.id })
+        .from(orderList)
+        .innerJoin(orderGroup, eq(orderGroup.id, orderList.order_group_id))
+        .where(
+          and(
+            eq(orderGroup.user_id, u.id),
+            ne(orderList.status, 'collected')
+          )
+        )
+        .limit(1);
+
+      if (activeOrders.length === 0) {
+        // No active orders — actually expire the session
+        await db.update(user).set({ status: 'inactive' }).where(eq(user.id, u.id));
+        return c.json({ error: 'Session expired' }, 401);
+      }
+    // Otherwise: session stays alive because of pending order(s)
   }
 
   // Slide forward

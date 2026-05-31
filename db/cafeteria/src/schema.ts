@@ -17,9 +17,11 @@ export const user = pgTable('user', {
 });
 
 export const stall = pgTable('stall', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    stall_name: varchar('stall_name', {length: 128}).notNull(),
-})
+  id: uuid('id').primaryKey().defaultRandom(),
+  stallName: varchar('stall_name', { length: 128 }).notNull(),
+  prefix: varchar('prefix', { length: 4 }).notNull().unique(),
+  is_open: boolean('is_open').notNull().default(true),
+});
 
 export const staff = pgTable('staff', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -79,5 +81,13 @@ export const order = pgTable('order', {
     .notNull()
     .references(() => menuItem.id),
   quantity: integer('quantity').notNull(),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const idempotencyKey = pgTable('idempotency_key', {
+  key: varchar('key', { length: 128 }).primaryKey(),
+  user_id: uuid('user_id').notNull().references(() => user.id),
+  order_group_id: uuid('order_group_id').notNull().references(() => orderGroup.id),
+  response_body: text('response_body').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow(),
 });

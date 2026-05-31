@@ -1,6 +1,14 @@
 CREATE TYPE "public"."order_status" AS ENUM('paid', 'preparing', 'completed', 'collected');--> statement-breakpoint
 CREATE TYPE "public"."staff_role" AS ENUM('admin', 'staff');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('active', 'inactive');--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "idempotency_key" (
+	"key" varchar(128) PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL,
+	"order_group_id" uuid NOT NULL,
+	"response_body" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "menu_item" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"stall_id" uuid NOT NULL,
@@ -53,7 +61,10 @@ CREATE TABLE IF NOT EXISTS "staff" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stall" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"stall_name" varchar(128) NOT NULL
+	"stall_name" varchar(128) NOT NULL,
+	"prefix" varchar(4) NOT NULL,
+	"is_open" boolean DEFAULT true NOT NULL,
+	CONSTRAINT "stall_prefix_unique" UNIQUE("prefix")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
@@ -66,6 +77,18 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_token_unique" UNIQUE("token")
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "idempotency_key" ADD CONSTRAINT "idempotency_key_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "idempotency_key" ADD CONSTRAINT "idempotency_key_order_group_id_order_group_id_fk" FOREIGN KEY ("order_group_id") REFERENCES "public"."order_group"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "menu_item" ADD CONSTRAINT "menu_item_stall_id_stall_id_fk" FOREIGN KEY ("stall_id") REFERENCES "public"."stall"("id") ON DELETE no action ON UPDATE no action;

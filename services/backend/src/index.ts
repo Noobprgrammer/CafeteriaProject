@@ -11,6 +11,9 @@ import { stallAdminRoutes } from './routes/stallAdmin.js';
 import { devRoutes } from './routes/dev.js';
 import { studentAuthRoutes } from './routes/studentAuth.js';
 import { meRoutes } from './routes/me.js';
+import { orderRoutes } from './routes/orders.js';
+import { orderTrackingRoutes } from './routes/orderTracking.js';
+import { staffOrderRoutes } from './routes/staffOrders.js';
 
 const app = new Hono();
 
@@ -33,6 +36,9 @@ app.route('/stall-admin', stallAdminRoutes);
 app.route('/dev', devRoutes);
 app.route('/auth', studentAuthRoutes);
 app.route('/me', meRoutes);
+app.route('/orders', orderRoutes);
+app.route('/orders', orderTrackingRoutes);
+app.route('/staff/orders', staffOrderRoutes);
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404));
 

@@ -1,0 +1,13 @@
+                 List of relations
+ Schema |      Name       | Type  |     Owner      
+--------+-----------------+-------+----------------
+ public | idempotency_key | table | cafeteria_user
+ public | menu_item       | table | cafeteria_user
+ public | order           | table | cafeteria_user
+ public | order_group     | table | cafeteria_user
+ public | order_list      | table | cafeteria_user
+ public | staff           | table | cafeteria_user
+ public | stall           | table | cafeteria_user
+ public | user            | table | cafeteria_user
+(8 rows)
+
